@@ -1,9 +1,8 @@
 var request = require('request-promise');
 
-function getBaseUrl () {
+function baseUrl () {
   var endpoint = 'shapeshift.io'
-  // https://shapeshift.io/api.html#cors
-  return module.exports.cors ? 'https://cors.' + endpoint : 'https://' + endpoint
+  return 'https://' + endpoint
 }
 
 /**

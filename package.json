@@ -4,12 +4,20 @@
   "description": "A javascript wrapper for the ShapeShift API",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha test/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/masonicGIT/shapeshiftjs"
   },
   "keywords": [
     "shapeshift",
-    "bicoin",
-    "cryptocurrency"
+    "bitcoin",
+    "cryptocurrency",
+    "currency",
+    "litecoin",
+    "ethereum",
+    "blockchain"
   ],
   "author": "Mason Borda",
   "license": "MIT",
