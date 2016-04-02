@@ -1,42 +1,17 @@
+'use strict';
+
+var ShapeShiftJS = module.exports;
 var request = require('request-promise');
 
 function getBaseUrl () {
-  var endpoint = 'shapeshift.io'
-  // https://shapeshift.io/api.html#cors
-  return module.exports.cors ? 'https://cors.' + endpoint : 'https://' + endpoint
+  var endpoint = 'shapeshift.io';
+  return 'https://' + endpoint;
 }
-
-/**
- * getCoins() Get an array of currencies supported by ShapeShift
- *
- * url: shapeshift.io/getcoins
- * method: GET
- *
- * @returns { Array }
- */
-
-var getCoins = function() {
-  let options = {
-    uri: baseUrl() + '/getcoins',
-    headers: {
-      'User-Agent': 'ShapeShiftJS'
-    },
-    json: true
-  }
-
-  return request(options)
-  .then(function (coins) {
-    return coins;
-  })
-  .catch(function(err) {
-    return err;
-  });
-};
 
 /**
  * getRate() Get the current rate offered by shapeshift for a currency pair
  *
- * url: shapeshift.io/getcoins
+ * url: shapeshift.io/rate/ [currencyPair]
  * method: GET
  *
  * @param { String } currencyPair btc_ltc
@@ -46,12 +21,12 @@ var getCoins = function() {
  * @returns { String } currencyPairInfo.rate 70.1234
  */
 
-var getRate = function(currencyPair) {
+ShapeShiftJS.getRate = function(currencyPair) {
 
   if (currencyPair.indexOf('_') === -1) { throw new Error('Invalid currency pair string.') }
 
   let options = {
-    uri: baseUrl() + '/rate/' + currencyPair,
+    uri: getBaseUrl() + '/rate/' + currencyPair,
     headers: {
       'User-Agent': 'ShapeShiftJS'
     },
@@ -83,12 +58,12 @@ var getRate = function(currencyPair) {
  * @returns { Number } marketInfo.minerFee 0.0001
  */
 
-var getMarketInfo = function(currencyPair) {
+ShapeShiftJS.getMarketInfo = function(currencyPair) {
 
   if (currencyPair.indexOf('_') === -1) { throw new Error('Invalid currency pair string.') }
 
   let options = {
-    uri: baseUrl() + '/marketinfo/' + currencyPair,
+    uri: getBaseUrl() + '/marketinfo/' + currencyPair,
     headers: {
       'User-Agent': 'ShapeShiftJS'
     },
@@ -119,10 +94,10 @@ var getMarketInfo = function(currencyPair) {
  * @returns { Number } recentTx.amount 10 (shown in seconds)
  */
 
-var recentTx = function(max) {
+ShapeShiftJS.recentTx = function(max) {
 
   let options = {
-    uri: baseUrl() + '/marketinfo/' + max,
+    uri: getBaseUrl() + '/recenttx/' + max,
     headers: {
       'User-Agent': 'ShapeShiftJS'
     },
@@ -172,10 +147,10 @@ var recentTx = function(max) {
  * @returns { String } txStatus.error
  */
 
-var getTxStatus = function(address) {
+ShapeShiftJS.getTxStatus = function(address) {
 
   let options = {
-    uri: baseUrl() + '/txStat/' + address,
+    uri: getBaseUrl() + '/txStat/' + address,
     headers: {
       'User-Agent': 'ShapeShiftJS'
     },
@@ -204,10 +179,10 @@ var getTxStatus = function(address) {
  * @returns { Number } time.seconds_remaining 600
  */
 
-var getTimeRemaining = function(address) {
+ShapeShiftJS.getTimeRemaining = function(address) {
 
   let options = {
-    uri: baseUrl() + '/timeremaining/' + address,
+    uri: getBaseUrl() + '/timeremaining/' + address,
     headers: {
       'User-Agent': 'ShapeShiftJS'
     },
@@ -236,10 +211,10 @@ var getTimeRemaining = function(address) {
  * @returns { String } info['SYMBOL'].status available
  */
 
-var getCoinInfo = function() {
+ShapeShiftJS.getCoinInfo = function() {
 
   let options = {
-    uri: baseUrl() + '/getcoins',
+    uri: getBaseUrl() + '/getcoins',
     headers: {
       'User-Agent': 'ShapeShiftJS'
     },
@@ -256,7 +231,7 @@ var getCoinInfo = function() {
 };
 
 /**
- * validateAddress() Validate an address given a currency symbol and addres
+ * validateAddress() Validate an address given a currency symbol and address
  *
  * url: shapeshift.io/validateAddress/[address]/[coinSymbol]
  * method: GET
@@ -269,10 +244,10 @@ var getCoinInfo = function() {
  * @returns { String } response.error (if isValid is false)
  */
 
-var validateAddress = function(address, symbol) {
+ShapeShiftJS.validateAddress = function(address, symbol) {
 
   let options = {
-    uri: baseUrl() + '/validateAddress/' + address + '/' + symbol,
+    uri: getBaseUrl() + '/validateAddress/' + address + '/' + symbol,
     headers: {
       'User-Agent': 'ShapeShiftJS'
     },
@@ -315,16 +290,16 @@ var validateAddress = function(address, symbol) {
  * @returns { String } response.apiPubKey 
  */
 
-var postShift = function(params) {
+ShapeShiftJS.postShift = function(params) {
 
   let options = {
     method: 'POST',
-    uri: baseUrl() + '/shift',
+    uri: getBaseUrl() + '/shift',
     body: {
       withdrawTo: params.withdrawTo,
-      currencyPair: params.currencyPair
-      returnAddress: params.returnAddress || '',
-      apiKey: config.shapeshiftApiKey || ''
+      currencyPair: params.currencyPair,
+      returnAddress: params.returnAddress || null,
+      apiKey: config.shapeshiftApiKey || null
     },
     headers: {
       'User-Agent': 'ShapeShiftJS'
@@ -356,11 +331,11 @@ var postShift = function(params) {
  * @returns { String } response.message Email receipt sent
  */
 
-var postRequestEmail = function(params) {
+ShapeShiftJS.postRequestEmail = function(params) {
 
   let options = {
     method: 'POST',
-    uri: baseUrl() + '/mail',
+    uri: getBaseUrl() + '/mail',
     body: {
       email: params.email,
       txid: params.txid
@@ -381,7 +356,7 @@ var postRequestEmail = function(params) {
 };
 
 /**
- * postSendAmount() Request that a fixed amount be send to the withdrawal address
+ * postSendAmount() Request that a fixed amount be sent to the withdrawal address
  *
  * url: shapeshift.io/sendamount
  * method: POST
@@ -400,11 +375,11 @@ var postRequestEmail = function(params) {
  * @returns { String } response.message Email receipt sent
  */
 
-var postSendAmount = function(params) {
+ShapeShiftJS.postSendAmount = function(params) {
 
   let options = {
     method: 'POST',
-    uri: baseUrl() + '/sendamount',
+    uri: getBaseUrl() + '/sendamount',
     body: {
       amount: params.amount,
       withdrawal: params.withdrawTo,
