@@ -376,13 +376,13 @@ ShapeShiftJS.postRequestEmail = function(params) {
  */
 
 ShapeShiftJS.postSendAmount = function(params) {
-
+  
   let options = {
     method: 'POST',
     uri: getBaseUrl() + '/sendamount',
     body: {
       amount: params.amount,
-      withdrawal: params.withdrawTo,
+      withdrawal: params.withdrawal,
       pair: params.currencyPair,
       returnAddress: params.returnAddress || '',
       apiKey: params.apiKey || ''

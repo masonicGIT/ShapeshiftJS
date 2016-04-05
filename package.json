@@ -1,10 +1,14 @@
 {
   "name": "shapeshiftjs",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "A javascript wrapper for the ShapeShift API",
   "main": "index.js",
   "scripts": {
     "test": "mocha test/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/masonicgit/shapeshiftjs.git"
   },
   "keywords": [
     "shapeshift",
